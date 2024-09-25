@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {createStore} from 'redux';
+import {applyMiddleware,  createStore} from 'redux';
 import counter from './reducers';
 import rootReducer from './reducers';
 import { Provider } from 'react-redux';
@@ -12,7 +12,17 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const store = createStore(rootReducer);
+const loggerMiddleware = (store: any) => (next:any) => (action:any) => {
+  console.log("store", store);
+  console.log('action', action);
+  next(action);
+}
+
+const middleware = applyMiddleware(loggerMiddleware);
+const preloadedState = {
+  counter:0,
+};
+const store = createStore(rootReducer, preloadedState, middleware);
 
 const render = () => root.render(
   <React.StrictMode>
